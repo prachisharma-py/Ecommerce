@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniStore</title>
+
+    <!--Favicon Icon -->
+    <link rel="icon" href="{% static 'images/favicon.ico.png' %}" type="image/x-icon">
+
+    <link rel="stylesheet" href="{% static "store/signup.css" %}">
+    {% block css_files %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <h2>Sign Up</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-field">
+                {{ form.username.label }}
+                {{ form.username }}
+            </div>
+
+            <div class="form-field">
+                {{ form.email.label }}
+                {{ form.email }}
+            </div>
+
+            <div class="form-field">
+                {{ form.password1.label }}
+                {{ form.password1 }}
+            </div>
+
+            <div class="form-field">
+                {{ form.password2.label }}
+                {{ form.password2 }}
+            </div>
+
+            {% if form.errors or form.non_field_errors %}
+                <div class="form-error">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li class="error-message">{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li class="error-message">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <button type="submit">Sign up</button>
+        </form>
+    </div>
+</body>
+</html>

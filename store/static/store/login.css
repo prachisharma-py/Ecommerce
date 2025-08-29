@@ -1,0 +1,96 @@
+/* Reset some default styles */
+body, h2, form {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Form container */
+form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+}
+
+/* Heading styles */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #48406e;
+    font-size: 2rem;
+}
+
+/* Form field styles */
+.form-field {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column; /* Stack label and input vertically */
+}
+
+label {
+    margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 5px;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: rgb(100, 85, 126);
+    outline: none;
+}
+
+/* Error message styles */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.form-error {
+    margin-top: 10px;
+}
+
+.form-error ul {
+    padding: 0;
+    list-style: none;
+    color: red;
+}
+
+/* Button styles */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: rgb(100, 85, 126);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: rgb(164, 139, 205);
+}

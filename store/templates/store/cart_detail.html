@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    Cart - AniStore
+{% endblock %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static "store/cart_detail.css" %}">
+{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+    {% if cart.items.exists %}
+
+    <div class="cart-header">
+        <div class="pro">Product</div>
+        <div class="qua">Price</div>
+        <div class="pri">Quantity</div>
+        <div class="tot">Total</div>
+    </div>
+
+    <!-- Loop through Cart Items -->
+    <div class="cart-items">
+        {% for item in cart_items %}
+            <div class="cart-item">
+                <div class="cart-column product">
+                    <a href="{% url 'product_detail' item.product.slug %}" class="product-link">
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="cart-product-image"> 
+                    </a>
+                    <div class="product-details">
+                        <a href="{% url 'product_detail' item.product.slug %}" class="product-link">
+                            <span class="item-name">{{ item.product.name }}</span>
+                        </a>
+                        <form method="post" class="remove-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="remove_item_id" value="{{ item.id }}">
+                            <button type="submit" class="remove-btn">Remove</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="cart-column price">${{ item.product.price }}</div>
+                <div class="quantity-container">
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="update_item_id" value="{{ item.id }}">
+                        <button class="qty-btn" type="submit" name="action" value="decrease">
+                            <span>-</span>
+                        </button>
+                    </form>
+                    <span class="quantity">{{ item.quantity }}</span>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="update_item_id" value="{{ item.id }}">
+                        <button class="qty-btn" type="submit" name="action" value="increase">
+                            <span>+</span>
+                        </button>
+                    </form>
+                </div> 
+                <div class="cart-column total-price">${{ item.total_price }}</div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Cart Subtotal and Checkout -->
+    <div class="cart-summary">
+        <div class="cart-subtotal">
+            <span>Subtotal:</span>
+            <span>${{ cart_subtotal }}</span>
+        </div>
+        <div class="cart-checkout">
+            <a href="{% url 'checkout' %}" class="checkout-btn">Proceed to Checkout</a>
+        </div>
+    </div>
+    {% else %}
+    <!-- Display when the cart is empty -->
+    <p>Your cart is empty!</p>
+    <a href="{% url 'store' %}" class="return-btn">Return to Shop</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,249 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Open+Sans:wght@400;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Open Sans', 'Lato', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Lato', sans-serif;
+  font-weight: bold;
+}
+
+html, body {
+  height: 100%;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.site-logo {
+  display: flex;
+  align-items: center;
+}
+
+.site-logo a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+}
+
+.site-logo img {
+  height: 40px;
+  margin-right: 8px;
+}
+
+#main-navigation {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height:4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4.5%;
+  z-index: 1000;
+  font-size: 20px;
+  background-color: #ffc7cb22;
+  backdrop-filter: blur(8px);
+  transition: background-color 0.3s ease;
+}
+
+#main-navigation a {
+  text-decoration: none;
+  color: #48406e;
+  font-weight: bold;
+  margin-left: 2rem;
+}
+
+#main-navigation a:hover,
+#main-navigation a:active {
+  color: #8653ed;
+}
+
+#main-navigation h1 a:hover,
+#main-navigation h1 a:active {
+  color: #8653ed;
+}
+
+@media (max-width: 768px) {
+  #mainNavLinks {
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 243, 244, 0.85); 
+    z-index: 999;
+    padding: 1rem 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+  }
+
+  #mainNavLinks .nav-link {
+    display: block;
+    width: 100%;
+    padding: 0.75rem 0;
+    color: #48406e;
+    font-weight: bold;
+  }
+}
+
+.navbar-toggler {
+  border: none;
+  background-color: transparent;
+  padding: 0.25rem;
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar-toggler-icon {
+  background-image: none; 
+  width: 1em;
+  height: 1em;
+  position: relative;
+  display: inline-block;
+}
+
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after,
+.navbar-toggler-icon div {
+  content: "";
+  background-color: #48406e;
+  height: 3.5px;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover,
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler:focus-visible {
+  background-color: transparent;
+  box-shadow: none;
+  outline: none;
+}
+
+.navbar-toggler-icon::before {
+  top: 0;
+}
+
+.navbar-toggler-icon div {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.navbar-toggler-icon::after {
+  bottom: 0;
+}
+
+/* MESSAGE */
+.messages {
+  position: fixed; 
+  top: 55px;
+  right: 20px; 
+  width: auto; 
+  z-index: 1000; 
+  list-style: none; 
+  padding: 0;
+  margin: 0;
+}
+
+.messages li {
+  padding: 10px 15px;
+  border-radius: 5px; 
+  font-size: 15px;
+  color: #fff; 
+  background-color: #333; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+  opacity: 0.9; 
+  transition: all 0.3s ease-in-out;
+}
+
+.messages li {
+  background-color: rgb(100, 85, 126);
+}
+
+.messages li a {
+  color: #fff; 
+  text-decoration: underline; 
+}
+
+.messages li:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+/* Auto-hide message */
+@keyframes fadeout {
+  from { opacity: 0.9; }
+  to { opacity: 0; }
+}
+
+.messages li.fadeout {
+  animation: fadeout 15s ease forwards;
+}
+
+/* FOOTER */
+#footer{
+  background-color: #F7EFE5;
+  margin-top: auto;
+}
+
+.container-fluid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  place-items: center;
+}
+
+.logo {
+  margin: 3.5rem;
+}
+
+.logo a {
+  text-decoration: none;
+  color: #48406e;
+}
+
+.social{
+  margin: 3.5rem;
+}
+
+.social-icon{
+  margin: 20px 10px;
+  font-size: 1.3rem;
+  color: #674188;
+}
+
+.menu ul {
+  list-style-type: none;
+  color: #674188;
+  margin: 3.5rem;
+  font-weight: bold;
+}
+
+.bottom {
+  background-color: #F7EFE5;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Media Query for small screens (mobile) */
+@media (max-width: 500px) {
+  .container-fluid {
+      grid-template-columns: auto;
+  }
+  .social {
+    margin: 0;
+  }
+}

@@ -1,0 +1,21 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniStore</title>
+
+    <!--Favicon Icon -->
+    <link rel="icon" href="{% static 'images/favicon.ico.png' %}" type="image/x-icon">
+
+    <link rel="stylesheet" href="{% static "store/payment_success.css" %}">
+    {% block css_files %}{% endblock %}
+</head>
+<body>
+    <h2>Thank you for your purchase!</h2>
+    <p>Your order has been successfully placed.</p>
+    <a href="{% url 'product_list' %}">Continue Shopping</a>
+</body>
+</html>

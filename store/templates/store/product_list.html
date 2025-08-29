@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    {% if category %}
+        {{ category.name }} - AniStore
+    {% else %}
+        Products - AniStore
+    {% endif %}
+{% endblock %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static "store/product_list.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class=".container-fluid px-0">
+        {% if category %}
+            <h2 id="cname">Category: {{ category.name }}</h2>
+        {% endif %}
+        <div class="column">
+            {% for product in products %}
+            <div class="col">
+                <a href="{% url 'product_detail' product.slug %}">
+                    <img src="{{ product.image.url }}"  alt="{{ product.name }}">
+                    <h2 class="teename">{{ product.name }}</h2>
+                </a>
+                <h4 class="price">${{ product.price }}</h4>
+                <form action="{% url "add_to_cart" product.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn_cart">Add to Cart</button>
+                </form>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock %}

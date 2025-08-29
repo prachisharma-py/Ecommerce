@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    {{ product.name }} - AniStore 
+{% endblock %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static "store/product_detail.css" %}">
+{% endblock %}
+
+{% block content %}
+<h1 class="pname">{{ product.name }}</h1>
+    <div class="custom-container">
+        <img class="pimg" src="{{ product.image.url }}" alt="{{ product.name }}">
+        <div class="product_detail">
+            <p style="font-size: 1.5rem;">${{ product.price }}</p>
+            <form action="{% url 'product_detail' product.slug %}" method="post">
+                {% csrf_token %}
+                <div class="quantity-container">
+                    <button class="qty-btn" type="submit" name="action" value="decrease">
+                        <span>-</span>
+                    </button>
+                    <input type="number" class="quantity" name="quantity" value="{{ quantity }}">
+                    <button class="qty-btn" type="submit" name="action" value="increase">
+                        <span>+</span>
+                    </button>
+                </div>
+                <div class="submit-btn">
+                    <button type="submit" formaction="{% url 'add_to_cart' product.id %}">Add to Cart</button>
+                    <button type="submit"  formaction="{% url 'buy_now' product.id %}">Buy Now</button>
+                </div>
+            </form>
+            {% if product.sub_description %}
+                <p class="sub-description">{{ product.sub_description }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="description-container">
+        <h3>Description</h3>
+        <ul style="list-style-type: disc; padding-left: 20px;">
+            {% if product.description %}
+                {% for item in product.description.splitlines %}
+                    <li>{{ item }}</li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+    </div>
+    {% if product.instructions %}
+        <div class="instructions-container">
+            <h3>Wash & Care:</h3>
+            <ul style="list-style-type: disc; padding-left: 20px;">
+                    {% for item in product.instructions.splitlines %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,114 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+
+  <!--Favicon Icon -->
+  <link rel="icon" href="{% static 'images/favicon.ico.png' %}" type="image/x-icon">
+
+
+  <!--Font Awesome-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+  integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!--Bootstrap CSS-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static "app.css" %}">
+  {% block css_files %}{% endblock %}
+
+</head>
+<body>
+    <div class="page-wrapper">
+        <header id="main-navigation" class="navbar navbar-expand-md">
+            <h1 class="site-logo">
+              <a href="{% url 'store' %}">
+                <img src="{% static 'images/anilogo.png' %}" alt="AniStore Logo">
+                AniStore
+              </a>
+            </h1>
+          
+            <!-- Hamburger toggle visible on mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavLinks"
+                    aria-controls="mainNavLinks" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"><div></div></span>
+            </button>
+          
+            <div class="collapse navbar-collapse justify-content-end" id="mainNavLinks">
+              <ul class="navbar-nav d-flex align-items-center mb-0">
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'product_list' %}">Products</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'cart_detail' %}">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                  </a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'signup' %}">Signup</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                {% endif %}
+              </ul>
+            </div>
+          </header>
+          
+
+        <!-- Message Display Block -->
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }} fadeout"{% endif %}>
+                        {{ message|safe }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    
+        {% block content %}{% endblock %}
+
+        <footer id="footer">
+            <div class="container-fluid">
+                <div class="logo">
+                    <h1 class="site-logo">
+                        <a href="{% url "store" %}">
+                          <img src="{% static 'images/anilogo.png' %}" alt="AniStore Logo">
+                          AniStore
+                        </a>
+                    </h1>
+                </div>
+                <div class="social">
+                    <a href=""><i class="social-icon fa-brands fa-twitter"></i></a>
+                    <a href=""><i class="social-icon fa-brands fa-facebook-f"></i></a>
+                    <a href=""><i class="social-icon fa-brands fa-instagram"></i></a>
+                </div>
+                <div class="menu">
+                    <ul>
+                        <li>Terms & Condition</li>
+                        <li>Privacy Policy</li>
+                        <li>100 Days Return Policy</li>
+                        <li>About us</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="bottom">
+                <p>© Copyright 2025 AniStore</p>
+            </div>
+        </footer>
+    </div> 
+<!--Bootstrap JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> 
+</body>
+</html>

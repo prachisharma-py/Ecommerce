@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+    AniStore
+{% endblock %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static "store/store.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for chunk in product_chunks %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="product-container">
+                        {% for product in chunk %}
+                            <div class="column">
+                                <a href="{% url 'product_detail' product.slug %}">
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Carousel controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+
+    <div class="category-list">
+        <h2 id="caat">CATEGORIES</h2>
+        <ul>
+            {% for category in categories %}
+                <li>
+                    <a id="cat-name" href="{% url 'product_list_by_category' category.slug %}">
+                        <h3>{{ category.name }}</h3>
+                    </a>
+                    <div class="product-images">
+                        {% for product in category.products.all|slice:":3" %}
+                            {% if product.image %}
+                                <a href="{% url 'product_detail' product.slug %}">
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="category-image">
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

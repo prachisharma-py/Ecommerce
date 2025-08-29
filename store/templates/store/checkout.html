@@ -1,0 +1,118 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - AniStore</title>
+
+    <!--Favicon Icon -->
+    <link rel="icon" href="{% static 'images/favicon.ico.png' %}" type="image/x-icon">
+
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <link rel="stylesheet" href="{% static "store/checkout.css" %}">
+    {% block css_files %}{% endblock %}
+</head>
+<body>
+    <h2>Checkout</h2>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-field">
+                {{ form.full_name.label }}
+                {{ form.full_name }}
+            </div>
+
+            <div class="form-field">
+                {{ form.email.label }}
+                {{ form.email }}
+            </div>
+
+            <div class="form-field">
+                {{ form.address.label }}
+                {{ form.address }}
+            </div>
+
+            <div class="form-field">
+                {{ form.country.label }}
+                {{ form.country }}
+            </div>
+
+            <div class="form-field">
+                {{ form.city.label }}
+                {{ form.city }}
+            </div>
+
+            <div class="form-field">
+                {{ form.postal_code.label }}
+                {{ form.postal_code }}
+            </div>
+
+        
+
+            <!-- Error Checking Block -->
+            {% if form.errors or form.non_field_errors %}
+                <div class="form-error">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li class="error-message">{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li class="error-message">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <h3>Order Summary</h3>
+
+            <div class="cart-container">
+                {% if cart_items %}
+
+                <div class="cart-header">
+                    <div class="pro">Product</div>
+                    <div class="qua">Price</div>
+                    <div class="pri">Quantity</div>
+                </div>
+                    
+                <!-- Loop through Cart Items -->
+                <div class="cart-items">
+                    {% for item in cart_items %}
+                        <div class="cart-item">
+                            <div class="cart-column product">
+                                <a href="{% url 'product_detail' item.product.slug %}" class="product-link">
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="cart-product-image">
+                                </a>
+                                <div class="product-details">
+                                    <a href="{% url 'product_detail' item.product.slug %}" class="product-link">
+                                        <span class="item-name">{{ item.product.name }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="cart-column price">${{ item.product.price }}</div>
+                            <div class="cart-column quantity">
+                                <span>{{ item.quantity }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    
+                        <!-- Cart Total and Checkout Form -->
+                        <div class="cart-summary">
+                            <div class="cart-subtotal">
+                                <span>Total:</span>
+                                <span>$ {{ cart_total }}</span>
+                            </div>
+                            <div class="cart-checkout">
+                                <button type="submit" class="checkout-btn">Pay Now</button>
+                            </div>
+                        </div>
+                {% endif %}
+            </div> 
+        </form>
+</body>
+</html>

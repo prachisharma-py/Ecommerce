@@ -1,0 +1,30 @@
+# === ENVIRONMENT VARIABLES ===
+.env
+
+# === PYTHON CACHE ===
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# === DJANGO MIGRATIONS CACHE ===
+**/migrations/__pycache__/
+
+# === UPLOADS (user files) ===
+uploads/
+
+# === VS CODE ===
+.vscode/
+
+# === OS FILES ===
+.DS_Store
+Thumbs.db
+
+# === STATIC FILES (collected) ===
+staticfiles/
+static_root/
+
+# === DATABASE FILES ===
+db.sqlite3
+db.sqlite3.bak
+data.json

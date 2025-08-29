@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AniStore</title>
+
+    <!--Favicon Icon -->
+    <link rel="icon" href="{% static 'images/favicon.ico.png' %}" type="image/x-icon">
+
+    <link rel="stylesheet" href="{% static "store/login.css" %}">
+    {% block css_files %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <h2>Log in</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-field">
+                <label for="{{ form.username.id_for_label }}">{{ form.username.label|slice:": " }}</label>
+                {{ form.username }}
+            </div>
+
+            <div class="form-field">
+                <label for="{{ form.password.id_for_label }}">{{ form.password.label|slice:": " }}</label>
+                {{ form.password }}
+            </div>
+            
+            <button type="submit">Log in</button>
+        </form>
+    </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+</body>
+</html>
