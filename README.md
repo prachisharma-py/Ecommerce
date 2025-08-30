@@ -50,15 +50,16 @@ Explore the live version of AniStore:
 
 ## 🛠️ Built With
 
-| Tech Stack       | Description                             |
-|------------------|-----------------------------------------|
-| 🐍 **Python**     | Core language powering the backend       |
-| 🌐 **Django**     | Web framework for backend logic          |
-| 🧠 **SQLite**     | Lightweight DB for development/testing   |
-| 🎨 **Bootstrap 5**| Styling & responsive frontend layout     |
-| 💳 **Stripe API** | Secure payment processing                |
-| 🧾 **HTML/CSS**   | Frontend templates & styling             |
-| 🔐 **Django Auth**| Built-in user authentication system      |
+| Tech Stack           | Description                                  |
+|----------------------|-----------------------------------------------|
+| 🐍 **Python**       | Core language powering the backend            |
+| 🌐 **Django**       | Web framework for backend logic               |
+| 🧠 **SQLite**       | Lightweight DB for local development/testing  |
+| 🐘 **Neon Postgres**| Serverless PostgreSQL database used in production |
+| 🎨 **Bootstrap 5**  | Styling & responsive frontend layout          |
+| 💳 **Stripe API**   | Secure payment processing                     |
+| 🧾 **HTML/CSS**     | Frontend templates & styling                  |
+| 🔐 **Django Auth**  | Built-in user authentication system           |
 
 ---
 
