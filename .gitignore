@@ -10,19 +10,12 @@ __pycache__/
 # === DJANGO MIGRATIONS CACHE ===
 **/migrations/__pycache__/
 
-# === UPLOADS (user files) ===
-uploads/
-
 # === VS CODE ===
 .vscode/
 
 # === OS FILES ===
 .DS_Store
 Thumbs.db
-
-# === STATIC FILES (collected) ===
-staticfiles/
-static_root/
 
 # === DATABASE FILES ===
 db.sqlite3
