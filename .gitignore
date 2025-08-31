@@ -13,6 +13,10 @@ __pycache__/
 # === VS CODE ===
 .vscode/
 
+# Ignore collected static files and user-uploaded media
+staticfiles/
+uploads/
+
 # === OS FILES ===
 .DS_Store
 Thumbs.db
