@@ -8,7 +8,7 @@ Welcome to **AniStore**, a full-featured e-commerce web application built with D
 
 Explore the live version of AniStore:
 
-🔗 **Live Demo:** [Visit AniStore on Render](https://your-anistore-url.onrender.com)
+🔗 **Live Demo:** (https://ecommerce-tnpb.onrender.com)
 
 ---
 
