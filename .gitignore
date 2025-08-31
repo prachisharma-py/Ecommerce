@@ -15,7 +15,6 @@ __pycache__/
 
 # Ignore collected static files and user-uploaded media
 staticfiles/
-uploads/
 
 # === OS FILES ===
 .DS_Store
