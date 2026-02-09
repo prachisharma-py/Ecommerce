@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Products, Cart, CartItem, Order, OrderItem
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm, LoginForm, CheckoutForm
 from django.contrib import messages
 from django.utils.html import format_html
+from .utils import merge_session_cart_to_db
 from django.urls import reverse
 from django.conf import settings
 import stripe
@@ -51,7 +53,7 @@ def product_detail(request, slug):
 
     # Check if 'quantity' is in the session
     if 'quantity' in request.session:
-        quantity = request.session['quantity']
+        request.session['quantity'] = quantity
 
     # Handle form submission to adjust quantity
     if request.method == 'POST':
@@ -72,42 +74,89 @@ def product_detail(request, slug):
 
 
 def cart_detail(request):
-    cart = get_object_or_404(Cart, user=request.user)
-    cart_items = cart.items.all()
+    cart = None
+    cart_items = []
+    cart_subtotal = 0
 
-    #Clear Buy Now mode if the user is accessing cart directly
+    # Clear Buy Now mode when opening cart
     request.session.pop('buy_now_product_id', None)
     request.session.pop('buy_now_mode', None)
 
-    if request.method == "POST":
-        if "remove_item_id" in request.POST:
-            # Handle item removal
-            item_id = request.POST.get("remove_item_id")
-            cart_item = get_object_or_404(CartItem, id=item_id, cart=cart)
-            cart_item.delete()
-        elif "update_item_id" in request.POST:
-            # Handle quantity update
-            item_id = request.POST.get("update_item_id")
-            action = request.POST.get("action")
-            cart_item = get_object_or_404(CartItem, id=item_id, cart=cart)
+    # ===============================
+    # 🔐 LOGGED-IN USER (DB CART)
+    # ===============================
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user).first()
 
-            if action == 'increase':
-                cart_item.quantity += 1
-            elif action == 'decrease':
-                cart_item.quantity = max(1, cart_item.quantity - 1)
+        if cart:
+            cart_items = cart.items.all()
 
-            cart_item.total_price = cart_item.product.price * cart_item.quantity
-            cart_item.save()
-            message = 'Cart Updated!'
-            messages.success(request, message)
-        
-        return redirect('cart_detail')
+            if request.method == "POST":
+                if "remove_item_id" in request.POST:
+                    item_id = request.POST.get("remove_item_id")
+                    cart_item = get_object_or_404(CartItem, id=item_id, cart=cart)
+                    cart_item.delete()
+                    return redirect('cart_detail')
 
-    for item in cart_items:
-        item.total_price = item.product.price * item.quantity
-        item.save()
+                elif "update_item_id" in request.POST:
+                    item_id = request.POST.get("update_item_id")
+                    action = request.POST.get("action")
+                    cart_item = get_object_or_404(CartItem, id=item_id, cart=cart)
 
-    cart_subtotal = sum(item.total_price for item in cart_items)
+                    if action == 'increase':
+                        cart_item.quantity += 1
+                    elif action == 'decrease':
+                        cart_item.quantity = max(1, cart_item.quantity - 1)
+
+                    cart_item.total_price = cart_item.product.price * cart_item.quantity
+                    cart_item.save()
+                    messages.success(request, "Cart updated!")
+                    return redirect('cart_detail')
+
+            for item in cart_items:
+                item.total_price = item.product.price * item.quantity
+                item.save()
+                cart_subtotal += item.total_price
+
+    # ===============================
+    # 👤 GUEST USER (SESSION CART)
+    # ===============================
+    else:
+        session_cart = request.session.get('cart', {})
+
+        if request.method == "POST":
+            if "remove_product_id" in request.POST:
+                product_id = request.POST.get("remove_product_id")
+                session_cart.pop(product_id, None)
+                request.session['cart'] = session_cart
+                request.session.modified = True
+                return redirect('cart_detail')
+
+            elif "update_product_id" in request.POST:
+                product_id = request.POST.get("update_product_id")
+                action = request.POST.get("action")
+
+                if product_id in session_cart:
+                    if action == 'increase':
+                        session_cart[product_id] += 1
+                    elif action == 'decrease':
+                        session_cart[product_id] = max(1, session_cart[product_id] - 1)
+
+                request.session['cart'] = session_cart
+                request.session.modified = True
+                return redirect('cart_detail')
+
+        products = Products.objects.filter(id__in=session_cart.keys())
+
+        for product in products:
+            qty = session_cart[str(product.id)]
+            total = product.price * qty
+            cart_items.append({
+                'product': product,
+                'quantity': qty,
+                'total_price': total
+            })
+            cart_subtotal += total
 
     return render(request, "store/cart_detail.html", {
         "cart": cart,
@@ -116,25 +165,33 @@ def cart_detail(request):
     })
 
 
+
 def add_to_cart(request, product_id):
     product = get_object_or_404(Products, id=product_id)
-    quantity = int(request.POST.get('quantity', 1))  
+    quantity = int(request.POST.get('quantity', 1))
 
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-    cart_item.quantity = quantity
-    cart_item.save()
-    
-    message = format_html(
-        'Product added to cart successfully!<br><a href="{}">View Cart</a>',
-        reverse("cart_detail")
-    )
-    messages.success(request, message)
+    # 🔐 If user is logged in → DB cart
+    if request.user.is_authenticated:
+        cart, _ = Cart.objects.get_or_create(user=request.user)
+        cart_item, _ = CartItem.objects.get_or_create(cart=cart, product=product)
+        cart_item.quantity += quantity
+        cart_item.save()
 
-    # Redirect back to the product detail page
+    # 👤 Guest user → session cart
+    else:
+        cart = request.session.get('cart', {})
+
+        product_id_str = str(product_id)
+        cart[product_id_str] = cart.get(product_id_str, 0) + quantity
+
+        request.session['cart'] = cart
+        request.session.modified = True
+
+    messages.success(request, "Product added to cart!")
     return redirect('product_detail', slug=product.slug)
 
 
+@login_required(login_url='login')
 def buy_now(request, product_id):
     product = get_object_or_404(Products, id=product_id)
     quantity = int(request.POST.get('quantity', 1))
@@ -152,7 +209,20 @@ def buy_now(request, product_id):
 
     return redirect('checkout')
 
+
+def proceed_to_checkout(request):
+    """
+    Redirect guests to signup or login based on whether their email exists.
+    """
+    # Redirect logged-in users directly to checkout
+    if request.user.is_authenticated:
+        return redirect('checkout')
+
+    # Treat all guests as new and send to signup
+    return redirect(f"{reverse('signup')}?next=/checkout/")
+
     
+@login_required(login_url='login')
 def checkout(request):
     cart = Cart.objects.filter(user=request.user).first()
     if not cart or not cart.items.exists():
@@ -223,6 +293,7 @@ def checkout(request):
 
 
 # Handle successful payment
+@login_required(login_url='login')
 def payment_success(request):
     session_id = request.GET.get('session_id')
     print("Session ID received:", session_id)
@@ -267,18 +338,21 @@ def payment_failed(request):
 
 
 def signup(request):
+    next_url = request.GET.get('next', 'store')  # fallback to store if not provided
+
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('store')
+            merge_session_cart_to_db(request, user)
+
+            # Redirect to the page they were trying to access
+            return redirect(next_url)
     else:
         form = SignUpForm()
 
-    return render(request, 'store/signup.html', {
-        'form': form
-        })
+    return render(request, 'store/signup.html', {'form': form})
 
 
 def login_view(request):
@@ -287,21 +361,21 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            
-            # Authenticate the user
+
             user = authenticate(request, username=username, password=password)
-            
+
             if user is not None:
-                # Log the user in
                 login(request, user)
+                merge_session_cart_to_db(request, user)  
                 messages.success(request, f"Welcome back, {user.username}!")
                 return redirect('store')
             else:
                 messages.error(request, "Invalid username or password.")
     else:
         form = LoginForm()
-    
+
     return render(request, 'store/login.html', {'form': form})
+
 
 
 def logout_view(request):

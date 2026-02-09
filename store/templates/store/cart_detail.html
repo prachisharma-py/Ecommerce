@@ -12,7 +12,8 @@
 
 {% block content %}
 <div class="cart-container">
-    {% if cart.items.exists %}
+    {% if cart_items %}
+
 
     <div class="cart-header">
         <div class="pro">Product</div>
@@ -35,28 +36,43 @@
                         </a>
                         <form method="post" class="remove-form">
                             {% csrf_token %}
-                            <input type="hidden" name="remove_item_id" value="{{ item.id }}">
+                            {% if user.is_authenticated %}
+                                <input type="hidden" name="remove_item_id" value="{{ item.id }}">
+                            {% else %}
+                                <input type="hidden" name="remove_product_id" value="{{ item.product.id }}">
+                            {% endif %}
                             <button type="submit" class="remove-btn">Remove</button>
                         </form>
+
                     </div>
                 </div>
                 <div class="cart-column price">${{ item.product.price }}</div>
                 <div class="quantity-container">
                     <form method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="update_item_id" value="{{ item.id }}">
+                        {% if user.is_authenticated %}
+                            <input type="hidden" name="update_item_id" value="{{ item.id }}">
+                        {% else %}
+                            <input type="hidden" name="update_product_id" value="{{ item.product.id }}">
+                        {% endif %}
                         <button class="qty-btn" type="submit" name="action" value="decrease">
                             <span>-</span>
                         </button>
                     </form>
+
                     <span class="quantity">{{ item.quantity }}</span>
                     <form method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="update_item_id" value="{{ item.id }}">
+                        {% if user.is_authenticated %}
+                            <input type="hidden" name="update_item_id" value="{{ item.id }}">
+                        {% else %}
+                            <input type="hidden" name="update_product_id" value="{{ item.product.id }}">
+                        {% endif %}
                         <button class="qty-btn" type="submit" name="action" value="increase">
                             <span>+</span>
                         </button>
                     </form>
+
                 </div> 
                 <div class="cart-column total-price">${{ item.total_price }}</div>
             </div>
@@ -70,7 +86,9 @@
             <span>${{ cart_subtotal }}</span>
         </div>
         <div class="cart-checkout">
-            <a href="{% url 'checkout' %}" class="checkout-btn">Proceed to Checkout</a>
+            <a href="{% url 'proceed_to_checkout' %}" class="checkout-btn">
+                Proceed to Checkout
+            </a>
         </div>
     </div>
     {% else %}
